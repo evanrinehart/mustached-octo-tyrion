@@ -1,10 +1,29 @@
+Overview
+
+In this system we have Activities, Instances, and Bookings. An activity has
+zero or more instances on the schedule, each with its own price, length, and
+capacity.  Bookings are associated with an instance. Instances show up as
+available if there is still room.
+
+Recurring instances are implemented with a configurable or programmable rule
+which generates available instances in the requested range. If someone books
+one of the recurring instances then it is saved to the database as a real
+instance.
+
+Modifications and cancellations of elements of the schedule never affect
+bookings, and so do not affect instances with at least one booking. This may
+lead to lockups if later you want to add things back into overlapping places.
+In cases where it knows about this conflict ahead of time, the entire operation
+is aborted.
+
+
+
 Setup Instructions
 
 `bundle install' to get the gems listed in the Gemfile. It uses sqlite as the
 database so you do not need to set up MySQL users or anything.
 
 `rake test' to run the tests of the API.
-
 
 
 
