@@ -121,4 +121,29 @@ class ActivitiesControllerTest < ActionController::TestCase
     assert_response 400
   end
 
+  test "availability of totally booked instances" do
+    tuesday = Date.new 2014, 7, 22 # to avoid the default recurring schedule
+    activity = FactoryGirl.create :activity
+    instance = FactoryGirl.create :instance,
+      :activity_id => activity.id,
+      :date => tuesday
+    date = instance.date
+    instance.max_bookings.times do
+      FactoryGirl.create :booking, :instance_id => instance.id
+    end
+    instance.reload
+
+    assert instance.bookings.count == instance.max_bookings
+
+    get :available_days,
+      :activity_id => activity.id,
+      :start_date => date.to_s,
+      :end_date => date.to_s
+
+    results = JSON.parse response.body
+
+    assert results.empty?, 'booked stuff should not show up in available'
+    
+  end
+
 end

@@ -7,10 +7,16 @@ class Activity < ActiveRecord::Base
 
   has_many :instances
 
-  def availabilities_between date_range
+  def enumerate_instances date_range
     set1 = generate_instances date_range
     set2 = instances.where(:date => date_range).to_a
     (set1 | set2).sort_by{|x| [x.date, x.start_minute]}
+  end
+
+  def availabilities_between date_range
+    enumerate_instances(date_range).select do |inst|
+      inst.bookings.count < inst.max_bookings
+    end
   end
 
   def availabilities_on date
@@ -27,9 +33,14 @@ class Activity < ActiveRecord::Base
 
     bag = []
     date_range.each do |date|
-      bag.push generator.generate(params, self, date)
+      phantoms = generator.generate(params, self, date)
+      phantoms.each do |phantom|
+        if instances.where(:date => date, :start_minute => phantom.start_minute).empty?
+          bag.push phantom
+        end
+      end
     end
-    bag.flatten
+    bag
   end
 
   def unbooked_instances
@@ -58,7 +69,8 @@ class Activity < ActiveRecord::Base
   end
 
   def find_instance descriptor
-    availabilities_on(descriptor.date).select do |instance|
+    date = descriptor.date
+    enumerate_instances(date..date).select do |instance|
       instance.start_minute == descriptor.start_minute
     end.first
   end

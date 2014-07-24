@@ -17,7 +17,7 @@ class BookingsControllerTest < ActionController::TestCase
 
     post :create,
       :activity_id => @activity.id,
-      :instance_id => @instance.id,
+      :instance_id => @instance.descriptor_string,
       :user_id => 'u348957'
 
     assert_response 200
@@ -33,7 +33,7 @@ class BookingsControllerTest < ActionController::TestCase
     [200,200,400,400,400].each do |code|
       post :create,
         :activity_id => @activity.id,
-        :instance_id => @instance.id,
+        :instance_id => @instance.descriptor_string,
         :user_id => 'u348957'
       assert_response code
     end
@@ -43,7 +43,7 @@ class BookingsControllerTest < ActionController::TestCase
     booking = FactoryGirl.create :booking, :instance_id => @instance.id
     delete :destroy,
       :activity_id => @activity.id,
-      :instance_id => @instance.id,
+      :instance_id => @instance.descriptor_string,
       :id => booking.id
 
     assert_response 200

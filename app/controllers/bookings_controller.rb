@@ -1,20 +1,27 @@
 class BookingsController < ApplicationController
 
   def create
-    # to arbitrarily cause 404, would make more sense with access controls
-    Activity.find params[:activity_id]
+    activity = Activity.find params[:activity_id]
 
     raise BadRequest, 'bad user_id' unless params[:user_id]
 
+    descriptor = read_instance_descriptor params[:instance_id]
+
     Instance.transaction do # in real life need isolation serializable here
-      instance = Instance.includes(:bookings).find params[:instance_id]
+      instance = activity.find_instance descriptor
+      raise ActiveRecord::RecordNotFound if instance.nil?
+
       if instance.bookings.count == instance.max_bookings
         raise BadRequest, 'this activity is booked'
       else
+
+        instance.save! if instance.id.nil? # recurring instance becomes real
+
         Booking.create!(
           :instance_id => instance.id,
           :user_id => params[:user_id]
         )
+
       end
     end
     
@@ -22,10 +29,6 @@ class BookingsController < ApplicationController
   end
 
   def destroy
-    # mostly useless (without access controls) but will trigger a 404 if bad
-    Activity.find params[:activity_id]
-    Instance.find params[:instance_id]
-
     @booking = Booking.find params[:id]
     @booking.delete
     head 200

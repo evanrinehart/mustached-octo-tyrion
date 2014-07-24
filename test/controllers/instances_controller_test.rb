@@ -18,7 +18,7 @@ class InstancesControllerTest < ActionController::TestCase
   test 'delete instance' do
     delete :destroy,
       :activity_id => @activity.id,
-      :id => "#{@date}_#{'%02d:%02d:00' % [@hour,@minute]}"
+      :id => @instance.descriptor_string
 
     assert_response 200
 

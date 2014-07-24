@@ -36,4 +36,8 @@ class Instance < ActiveRecord::Base
     minutes_long == other_instance.minutes_long
   end
 
+  def descriptor_string
+    "#{date}_#{time_of_day}"
+  end
+
 end
