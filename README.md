@@ -18,6 +18,7 @@ is aborted.
 
 
 
+
 ## Setup Instructions
 
 `bundle install` to get the gems listed in the Gemfile. It uses sqlite as the
@@ -29,6 +30,8 @@ database so you do not need to set up MySQL users or anything.
 
 ## API
 
+### Query availability dates
+
 ```
 GET /activities/{activity_id}/available_days
   ?start_date={yyyy-mm-dd}
@@ -38,7 +41,8 @@ GET /activities/{activity_id}/available_days
 Responds with a JSON array of dates of availability for the requested activity
 within the requested date range. The dates are strings of the form yyyy-mm-dd.
 
----
+
+### Query availability times on a day
 
 ```
 GET /activities/{activity_id}/available_times?date={yyyy-mm-dd}
@@ -47,7 +51,7 @@ GET /activities/{activity_id}/available_times?date={yyyy-mm-dd}
 Respond with a JSON array of start times for the activity on that day. The
 times are in the form HH:MM:SS.
 
----
+### Add one activity instance
 
 ```
 POST /activities/{activity_id}/instances
@@ -65,7 +69,7 @@ Create a new individual instance for the activity at the specified date and
 time. Duration price and capacity must be specified as above. A 400 will happen
 if this overlaps an existing instance. Nothing is returned with a 200.
 
----
+### Install/reinstall recurring activity schedule
 
 ```
 POST /activities/{activity_id}/schedule/recurring
@@ -94,7 +98,7 @@ have it's own documentation. PrimeDays is a toy strategy to demonstrate an
 alternative rule: one availability instance occurs on prime numbered days at
 7PM (hour 19), and allows no configurability.
 
----
+### Remove vacant availability instance
 
 ```
 DELETE /activities/{activity_id}/instances/{instance_id}
@@ -108,7 +112,7 @@ bookings for that instance. If you cancel a (empty) recurring instance then it
 also cancels the entire recurrence schedule, except for currently existing
 booked instances.
 
----
+### Clear entire activity schedule
 
 ```
 POST /activities/{activity_id}/schedule/clear
@@ -117,7 +121,7 @@ POST /activities/{activity_id}/schedule/clear
 Cancel all (empty) instances of the specified activity including recurring
 ones. No post body is expected. Nothing is returned with a 200.
 
----
+### Create a booking
 
 ```
 POST /activities/{activity_id}/instances/{instance_id}/bookings
@@ -132,7 +136,7 @@ Create a new booking for a particular activity instance. 400 will happen
 if there is no more room. The user_id must be provided. JSON of the form
 {'booking_id':NNNN} will be returned on a 200.
 
----
+### Cancel a booking
 
 ```
 DELETE /activities/{activity_id}/instances/{instance_id}/bookings/#{booking_id}

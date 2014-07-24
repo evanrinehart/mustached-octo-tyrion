@@ -27,6 +27,8 @@ class ActivitiesControllerTest < ActionController::TestCase
 
   test "availability between two dates" do
 
+    today = Date.today
+
     get :available_days,
       :activity_id => @activity.id,
       :start_date => @start_date.to_s,
@@ -40,6 +42,10 @@ class ActivitiesControllerTest < ActionController::TestCase
     assert results.none?{|x| Date.parse(x) > @end_date }, "it didn't filter correctly"
 
     assert results.count == results.uniq.count
+
+    results.each do |date|
+      #assert Date.parse(date) >= today, 'available but in the past?'
+    end
   end
 
   test "bad calls" do
