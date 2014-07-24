@@ -31,7 +31,8 @@ class ActivitiesController < ApplicationController
     Activity.transaction do
       activity = Activity.find aid
       activity.update! :schedule => nil
-      activity.unbooked_instances.delete_all
+      x = activity.unbooked_instances
+      x.delete_all
     end
     render :json => {:success => "activity #{aid} schedule cleared"}
   end

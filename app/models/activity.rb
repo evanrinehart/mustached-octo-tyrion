@@ -44,7 +44,10 @@ class Activity < ActiveRecord::Base
   end
 
   def unbooked_instances
-    instances.includes(:bookings)
+    Instance
+      .joins('LEFT JOIN bookings ON instances.id = instance_id')
+      .where(:activity_id => self.id)
+      .where('bookings.id is NULL')
   end
 
   def set_schedule params
@@ -57,9 +60,9 @@ class Activity < ActiveRecord::Base
 
     # as long as nothing over laps
     self.instances.each do |booked|
-      date = instance.date #shadowing
+      date = booked.date #shadowing
       generate_instances(date..date).each do |generated|
-        if generated.overlaps booked
+        if generated.overlaps? booked
           raise BadSchedule, 'overlap'
         end
       end

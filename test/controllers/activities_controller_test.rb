@@ -146,4 +146,17 @@ class ActivitiesControllerTest < ActionController::TestCase
     
   end
 
+  test "clearing the schedule should not affect booked instances" do
+    instance = @activity.instances[3]
+    assert instance.bookings.empty?
+    FactoryGirl.create :booking, :instance_id => instance.id
+    assert instance.bookings.count == 1
+
+    post :clear, :activity_id => @activity.id
+    assert_response 200
+
+    assert Instance.exists?(instance.id), 'looks like it got deleted'
+    assert Instance.find(instance.id).bookings.count == 1
+  end
+
 end
