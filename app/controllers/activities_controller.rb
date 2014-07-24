@@ -31,16 +31,27 @@ class ActivitiesController < ApplicationController
     Activity.transaction do
       activity = Activity.find aid
       activity.update! :schedule => nil
-#      activity.instances...delete_all
-      # clear all instances which have no bookings
+      activity.unbooked_instances.delete_all
     end
     render :json => {:success => "activity #{aid} schedule cleared"}
   end
 
   def recurring
     aid = params[:activity_id]
-    # clear all instances which have no bookings
-    # set the schedule
+    if !['weekly','prime'].include? params[:strategy]
+      raise BadRequest, "bad strategy #{params[:strategy]}"
+    end
+
+    begin
+      Activity.transaction do
+        activity = Activity.find aid
+        activity.set_schedule params
+      end
+    rescue Activity::BadSchedule => e
+      raise BadRequest, e.message
+    end
+
+    head 200
   end
 
 end

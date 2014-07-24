@@ -39,4 +39,4 @@ gem 'sqlite3'
 # gem 'debugger', group: [:development, :test]
 
 
-gem 'factory_girl'
+gem 'factory_girl_rails'

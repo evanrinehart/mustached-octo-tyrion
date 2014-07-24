@@ -3,7 +3,7 @@ class Instance < ActiveRecord::Base
   belongs_to :activity
   has_many :bookings
 
-  def overlaps other_instance
+  def overlaps? other_instance
     a = self
     b = other_instance
 
@@ -28,6 +28,12 @@ class Instance < ActiveRecord::Base
     hours = start_minute / 60
     minutes = start_minute % 60
     "%02d:%02d:00" % [hours, minutes]
+  end
+
+  def eql? other_instance
+    date == other_instance.date &&
+    start_minute == other_instance.start_minute &&
+    minutes_long == other_instance.minutes_long
   end
 
 end
