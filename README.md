@@ -1,4 +1,4 @@
-Overview
+## Overview
 
 In this system we have Activities, Instances, and Bookings. An activity has
 zero or more instances on the schedule, each with its own price, length, and
@@ -18,31 +18,38 @@ is aborted.
 
 
 
-Setup Instructions
+## Setup Instructions
 
-`bundle install' to get the gems listed in the Gemfile. It uses sqlite as the
+`bundle install` to get the gems listed in the Gemfile. It uses sqlite as the
 database so you do not need to set up MySQL users or anything.
 
-`rake test' to run the tests of the API.
+`rake test` to run the tests of the API.
 
 
 
-API
+## API
 
+```
 GET /activities/{activity_id}/available_days
   ?start_date={yyyy-mm-dd}
   &end_date={yyyy-mm-dd}
+```
 
 Responds with a JSON array of dates of availability for the requested activity
 within the requested date range. The dates are strings of the form yyyy-mm-dd.
 
+---
 
+```
 GET /activities/{activity_id}/available_times?date={yyyy-mm-dd}
+```
 
 Respond with a JSON array of start times for the activity on that day. The
 times are in the form HH:MM:SS.
 
+---
 
+```
 POST /activities/{activity_id}/instances
 post body example:
   {
@@ -52,12 +59,15 @@ post body example:
     'price':        40,
     'max_bookings': 9
   }
+```
 
 Create a new individual instance for the activity at the specified date and
 time. Duration price and capacity must be specified as above. A 400 will happen
 if this overlaps an existing instance. Nothing is returned with a 200.
 
+---
 
+```
 POST /activities/{activity_id}/schedule/recurring
 post body example 1:
   {
@@ -71,6 +81,7 @@ post body example 1:
 
 post body example 2:
   {'strategy':'prime_days'}
+```
 
 Install a recurring availability schedule for this activity. Only one recurring
 schedule can exist per activity. All unbooked instances will be removed from
@@ -83,8 +94,11 @@ have it's own documentation. PrimeDays is a toy strategy to demonstrate an
 alternative rule: one availability instance occurs on prime numbered days at
 7PM (hour 19), and allows no configurability.
 
+---
 
+```
 DELETE /activities/{activity_id}/instances/{instance_id}
+```
 
 To specify an instance_id, use the start date and time in the format:
   YYYY-MM-DD_HH:MM:00
@@ -94,17 +108,22 @@ bookings for that instance. If you cancel a (empty) recurring instance then it
 also cancels the entire recurrence schedule, except for currently existing
 booked instances.
 
+---
 
+```
 POST /activities/{activity_id}/schedule/clear
+```
 
 Cancel all (empty) instances of the specified activity including recurring
 ones. No post body is expected. Nothing is returned with a 200.
 
+---
 
-
+```
 POST /activities/{activity_id}/instances/{instance_id}/bookings
 post body example:
   {'user_id':'u9999'}
+```
 
 To specify an instance_id, use the start date and time in the format:
   YYYY-MM-DD_HH:MM:00
@@ -112,13 +131,14 @@ To specify an instance_id, use the start date and time in the format:
 Create a new booking for a particular activity instance. 400 will happen
 if there is no more room. The user_id must be provided. JSON of the form
 {'booking_id':NNNN} will be returned on a 200.
- 
 
+---
+
+```
 DELETE /activities/{activity_id}/instances/{instance_id}/bookings/#{booking_id}
+```
 
 To specify an instance_id, use the start date and time in the format:
   YYYY-MM-DD_HH:MM:00
 
 Cancel the specified booking.
-
-
