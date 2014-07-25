@@ -57,11 +57,11 @@ times are in the form HH:MM:SS.
 POST /activities/{activity_id}/instances
 post body example:
   {
-    'date':         '2014-05-04',
-    'time':         '13:30:00',
-    'minutes_long': 30,
-    'price':        40,
-    'max_bookings': 9
+    "date":         "2014-05-04",
+    "time":         "13:30:00",
+    "minutes_long": 30,
+    "price":        40,
+    "max_bookings": 9
   }
 ```
 
@@ -75,16 +75,16 @@ if this overlaps an existing instance. Nothing is returned with a 200.
 POST /activities/{activity_id}/schedule/recurring
 post body example 1:
   {
-    'strategy':'weekly',
-    'days':[1,3,5],
-    'times':[9,14],
-    'price':100,
-    'max_bookings':10,
-    'minutes_long':90
+    "strategy":"weekly",
+    "days":[1,3,5],
+    "times":[9,14],
+    "price":100,
+    "max_bookings":10,
+    "minutes_long":90
   }
 
 post body example 2:
-  {'strategy':'prime_days'}
+  {"strategy":"prime_days"}
 ```
 
 Install a recurring availability schedule for this activity. Only one recurring
@@ -126,7 +126,7 @@ ones. No post body is expected. Nothing is returned with a 200.
 ```
 POST /activities/{activity_id}/instances/{instance_id}/bookings
 post body example:
-  {'user_id':'u9999'}
+  {"user_id":"u9999"}
 ```
 
 To specify an instance_id, use the start date and time in the format:
